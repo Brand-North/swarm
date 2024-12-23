@@ -7,7 +7,7 @@ export default function Hero() {
     <section className="min-h-screen relative flex items-center justify-center overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/20 to-background z-0" />
-      
+
       {/* Neural network background */}
       <div 
         className="absolute inset-0 opacity-20 z-0 bg-cover bg-center"
@@ -24,19 +24,26 @@ export default function Hero() {
           className="text-center"
         >
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
-            The Launchpad for Autonomous AI Swarms
+            Swarm AI Agents:<br/>
+            Together We Thrive
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-muted-foreground max-w-3xl mx-auto">
-            Propaganda.ai revolutionizes the AI landscape through autonomous swarm deployment, enabling unprecedented collaboration and efficiency.
+            Where one agent is good, a swarm of AI agents working in perfect harmony on Solana blockchain is unstoppable. 
+            Deploy intelligent swarms that think, collaborate, and deliver results at lightning speed.
           </p>
-          <Link href="/launch">
-            <Button 
-              size="lg"
-              className="text-lg px-8 py-6 bg-primary hover:bg-primary/90"
-            >
-              Launch Your Swarm
-            </Button>
-          </Link>
+          <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
+            <Link href="/launch">
+              <Button 
+                size="lg"
+                className="text-lg px-8 py-6 bg-primary hover:bg-primary/90"
+              >
+                Launch Your Swarm
+              </Button>
+            </Link>
+            <div className="text-sm text-muted-foreground">
+              Powered by Solana's high-performance blockchain
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

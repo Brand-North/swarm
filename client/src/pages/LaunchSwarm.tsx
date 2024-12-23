@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { AgentType, type AgentConfig, SwarmPreset } from "@/types/agents";
 import { Network, Shield, FileCode2, Brain, Database, Crown } from "lucide-react";
 import AgentHeatMap from "@/components/visualizations/AgentHeatMap";
+import NetworkVisualization from "@/components/visualizations/NetworkVisualization";
 import PresetConfigs from "@/components/presets/PresetConfigs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -68,6 +69,7 @@ export default function LaunchSwarm() {
   const [neuralCapacity, setNeuralCapacity] = useState(2048);
   const [cognitiveVariance, setCognitiveVariance] = useState(0.9);
   const [activeTab, setActiveTab] = useState<string>("custom");
+  const [isDeploying, setIsDeploying] = useState(false);
 
   const toggleAgent = (type: AgentType) => {
     setSelectedAgents(prev =>
@@ -110,10 +112,16 @@ export default function LaunchSwarm() {
       return;
     }
 
+    setIsDeploying(true);
     toast({
       title: "Deploying Neural Swarm",
       description: `Initializing ${selectedAgents.length} agents for ${swarmName}'s mission...`
     });
+
+    // Simulate deployment delay
+    setTimeout(() => {
+      setIsDeploying(false);
+    }, 5000);
   };
 
   return (
@@ -237,13 +245,24 @@ export default function LaunchSwarm() {
         </Tabs>
 
         {selectedAgents.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <AgentHeatMap selectedAgents={selectedAgents} />
-          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <AgentHeatMap selectedAgents={selectedAgents} />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <NetworkVisualization
+                selectedAgents={selectedAgents}
+                isDeploying={isDeploying}
+              />
+            </motion.div>
+          </div>
         )}
 
         <div className="flex flex-col items-center gap-4">
@@ -252,9 +271,13 @@ export default function LaunchSwarm() {
             size="lg"
             onClick={deploySwarm}
             className="bg-primary hover:bg-primary/90 w-full max-w-md"
-            disabled={!connected || selectedAgents.length === 0}
+            disabled={isDeploying || !connected || selectedAgents.length === 0}
           >
-            {connected ? "Deploy Neural Swarm" : "Connect Wallet to Deploy"}
+            {isDeploying
+              ? "Deploying Neural Swarm..."
+              : connected
+              ? "Deploy Neural Swarm"
+              : "Connect Wallet to Deploy"}
           </Button>
         </div>
       </div>

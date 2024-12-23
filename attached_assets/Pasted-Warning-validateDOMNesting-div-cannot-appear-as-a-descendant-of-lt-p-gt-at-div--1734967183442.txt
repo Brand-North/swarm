@@ -1,0 +1,29 @@
+Warning: validateDOMNesting(...): <div> cannot appear as a descendant of &lt;p&gt;.
+    at div
+    at p
+    at _c7 (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/src/components/ui/card.tsx:86:12)
+    at div
+    at div
+    at div
+    at _c3 (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/src/components/ui/card.tsx:43:12)
+    at div
+    at _c (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/@fs/home/runner/SwarmIntelligence/node_modules/.vite/deps/framer-motion.js?v=2f228344:6536:40)
+    at div
+    at _c9 (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/src/components/ui/card.tsx:106:12)
+    at div
+    at _c (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at div
+    at LaunchSwarm (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/src/pages/LaunchSwarm.tsx:69:21)
+    at Route (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/@fs/home/runner/SwarmIntelligence/node_modules/.vite/deps/wouter.js?v=2f228344:323:16)
+    at Switch (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/@fs/home/runner/SwarmIntelligence/node_modules/.vite/deps/wouter.js?v=2f228344:379:17)
+    at WalletModalProvider (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/@fs/home/runner/SwarmIntelligence/node_modules/.vite/deps/@solana_wallet-adapter-react-ui.js?v=2f228344:594:30)
+    at WalletProviderBase (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/@fs/home/runner/SwarmIntelligence/node_modules/.vite/deps/chunk-X4AYFYM7.js?v=2f228344:4767:31)
+    at WalletProvider (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/@fs/home/runner/SwarmIntelligence/node_modules/.vite/deps/chunk-X4AYFYM7.js?v=2f228344:4979:27)
+    at ConnectionProvider (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/@fs/home/runner/SwarmIntelligence/node_modules/.vite/deps/chunk-X4AYFYM7.js?v=2f228344:2415:29)
+    at SolanaWalletProvider (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/src/components/WalletProvider.tsx:27:40)
+    at App
+    at QueryClientProvider (https://469cd846-1e04-4bd2-a7d7-1a8302f4680e-00-y4sz3qaqpoue.worf.replit.dev/@fs/home/runner/SwarmIntelligence/node_modules/.vite/deps/@tanstack_react-query.js?v=399f1708:2805:3)

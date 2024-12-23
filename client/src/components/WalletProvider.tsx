@@ -11,23 +11,25 @@ interface Props {
   children: ReactNode;
 }
 
-const SOLANA_NETWORK = "devnet";
-const SOLANA_RPC_ENDPOINT = clusterApiUrl(SOLANA_NETWORK);
-
 export const SolanaWalletProvider: FC<Props> = ({ children }) => {
+  // Use environment variables for network configuration
+  const endpoint = import.meta.env.VITE_SOLANA_RPC_URL || clusterApiUrl("devnet");
+
   // Initialize wallet adapters
   const wallets = useMemo(
-    () => [
-      new PhantomWalletAdapter()
-    ],
+    () => [new PhantomWalletAdapter()],
     []
   );
 
   return (
-    <ConnectionProvider endpoint={SOLANA_RPC_ENDPOINT}>
+    <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>{children}</WalletModalProvider>
+        <WalletModalProvider>
+          {children}
+        </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
   );
 };
+
+export default SolanaWalletProvider;

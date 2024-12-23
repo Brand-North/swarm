@@ -177,8 +177,8 @@ export default function LaunchSwarm() {
                         <div>
                           <CardTitle className="text-lg">{agent.name}</CardTitle>
                           <CardDescription>
-                            <div className="font-medium text-primary/80">{agent.role}</div>
-                            {agent.description}
+                            <span className="font-medium text-primary/80 block">{agent.role}</span>
+                            <span className="block">{agent.description}</span>
                           </CardDescription>
                         </div>
                       </div>

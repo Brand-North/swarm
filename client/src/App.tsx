@@ -1,7 +1,7 @@
 import { Switch, Route } from "wouter";
 import Home from "./pages/Home";
 import LaunchSwarm from "./pages/LaunchSwarm";
-import { SolanaWalletProvider } from "./components/WalletProvider";
+import SolanaWalletProvider from "./components/WalletProvider";
 
 function App() {
   return (

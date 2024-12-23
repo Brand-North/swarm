@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { AgentType, type AgentConfig, SwarmPreset } from "@/types/agents";
+import { AgentType, CEOPersonalityTrait, type AgentConfig, SwarmPreset } from "@/types/agents";
 import { Network, Shield, FileCode2, Brain, Database, Crown } from "lucide-react";
 import AgentHeatMap from "@/components/visualizations/AgentHeatMap";
 import NetworkVisualization from "@/components/visualizations/NetworkVisualization";
 import PresetConfigs from "@/components/presets/PresetConfigs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const agents = [
   {
@@ -70,6 +71,10 @@ export default function LaunchSwarm() {
   const [cognitiveVariance, setCognitiveVariance] = useState(0.9);
   const [activeTab, setActiveTab] = useState<string>("custom");
   const [isDeploying, setIsDeploying] = useState(false);
+  const [ceoPersonality, setCeoPersonality] = useState<CEOPersonalityTrait>(CEOPersonalityTrait.VISIONARY);
+  const [riskTolerance, setRiskTolerance] = useState(0.5);
+  const [innovationFactor, setInnovationFactor] = useState(0.5);
+  const [decisionSpeed, setDecisionSpeed] = useState(0.5);
 
   const toggleAgent = (type: AgentType) => {
     setSelectedAgents(prev =>
@@ -85,11 +90,33 @@ export default function LaunchSwarm() {
     setCognitiveVariance(preset.cognitiveVariance);
     setSwarmName(`${preset.name} Swarm`);
     setSwarmPurpose(preset.description);
+    if (preset.ceoPersonality) {
+      setCeoPersonality(preset.ceoPersonality);
+      // Set default personality metrics based on the CEO personality type
+      switch (preset.ceoPersonality) {
+        case CEOPersonalityTrait.AGGRESSIVE:
+          setRiskTolerance(0.8);
+          setInnovationFactor(0.7);
+          setDecisionSpeed(0.9);
+          break;
+        case CEOPersonalityTrait.ANALYTICAL:
+          setRiskTolerance(0.4);
+          setInnovationFactor(0.6);
+          setDecisionSpeed(0.3);
+          break;
+        case CEOPersonalityTrait.INNOVATIVE:
+          setRiskTolerance(0.6);
+          setInnovationFactor(0.9);
+          setDecisionSpeed(0.7);
+          break;
+        // Add more cases as needed
+      }
+    }
     setActiveTab("custom");
 
     toast({
       title: "Preset Selected",
-      description: `Loaded ${preset.name} configuration. You can now customize or deploy directly.`
+      description: `Loaded ${preset.name} configuration with ${preset.ceoPersonality?.toLowerCase()} CEO personality.`
     });
   };
 
@@ -179,6 +206,72 @@ export default function LaunchSwarm() {
                       value={ceoGoal}
                       onChange={(e) => setCeoGoal(e.target.value)}
                     />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">CEO Personality</label>
+                    <Select
+                      value={ceoPersonality}
+                      onValueChange={setCeoPersonality}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select personality type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(CEOPersonalityTrait).map(([key, value]) => (
+                          <SelectItem key={key} value={value}>
+                            {value.charAt(0) + value.slice(1).toLowerCase()}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Risk Tolerance</label>
+                    <Slider
+                      value={[riskTolerance * 100]}
+                      onValueChange={([value]) => setRiskTolerance(value / 100)}
+                      max={100}
+                      min={0}
+                      step={10}
+                      className="py-2"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      {riskTolerance < 0.3 ? "Conservative" : 
+                       riskTolerance < 0.7 ? "Balanced" : "Aggressive"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Innovation Factor</label>
+                    <Slider
+                      value={[innovationFactor * 100]}
+                      onValueChange={([value]) => setInnovationFactor(value / 100)}
+                      max={100}
+                      min={0}
+                      step={10}
+                      className="py-2"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      {innovationFactor < 0.3 ? "Traditional" : 
+                       innovationFactor < 0.7 ? "Balanced" : "Disruptive"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Decision Speed</label>
+                    <Slider
+                      value={[decisionSpeed * 100]}
+                      onValueChange={([value]) => setDecisionSpeed(value / 100)}
+                      max={100}
+                      min={0}
+                      step={10}
+                      className="py-2"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      {decisionSpeed < 0.3 ? "Methodical" : 
+                       decisionSpeed < 0.7 ? "Balanced" : "Swift"}
+                    </p>
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-2 block">Neural Capacity: {neuralCapacity}</label>

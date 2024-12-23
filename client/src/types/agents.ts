@@ -11,7 +11,7 @@ export const AgentType = {
   CEO: "CEO",
   TOKEN_DEPLOYER: "TOKEN_DEPLOYER",
   COLLECTION_DEPLOYER: "COLLECTION_DEPLOYER",
-  NFT_MINTER: "NFT_MINTER", 
+  NFT_MINTER: "NFT_MINTER",
   TRADER: "TRADER",
   LENDER: "LENDER"
 } as const;
@@ -23,6 +23,17 @@ export interface BaseAgentProps {
   onError?: (error: Error) => void;
 }
 
+// CEO Personality Traits
+export const CEOPersonalityTrait = {
+  VISIONARY: "VISIONARY",
+  ANALYTICAL: "ANALYTICAL",
+  AGGRESSIVE: "AGGRESSIVE",
+  CONSERVATIVE: "CONSERVATIVE",
+  INNOVATIVE: "INNOVATIVE"
+} as const;
+
+export type CEOPersonalityTrait = typeof CEOPersonalityTrait[keyof typeof CEOPersonalityTrait];
+
 // Preset Configuration Types
 export interface SwarmPreset {
   id: string;
@@ -33,6 +44,8 @@ export interface SwarmPreset {
   cognitiveVariance: number;
   category: PresetCategory;
   icon: string;
+  ceoPersonality?: CEOPersonalityTrait;
+  ceoStrategy?: string;
 }
 
 export const PresetCategory = {
@@ -45,11 +58,15 @@ export const PresetCategory = {
 
 export type PresetCategory = typeof PresetCategory[keyof typeof PresetCategory];
 
-// Add CEO specific types
+// Add CEO specific types with personality
 export interface CEOAgentParams {
   goal: string;
   strategy?: string;
   delegatedAgents?: AgentType[];
+  personalityTrait?: CEOPersonalityTrait;
+  riskTolerance?: number; // 0-1
+  innovationFactor?: number; // 0-1
+  decisionSpeed?: number; // 0-1
 }
 
 // Token Deployer Agent Params

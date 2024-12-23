@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { SwarmPreset, PresetCategory, AgentType } from "@/types/agents";
+import { SwarmPreset, PresetCategory, AgentType, CEOPersonalityTrait } from "@/types/agents";
 import { Rocket, Gem, Trophy, Coins, Star } from "lucide-react";
 
 const presets: SwarmPreset[] = [
@@ -11,31 +11,37 @@ const presets: SwarmPreset[] = [
     id: "meme-warfare",
     name: "Meme Warfare",
     description: "Deploy a viral meme token with maximum social engagement potential",
-    agentTypes: [AgentType.TOKEN_DEPLOYER, AgentType.TRADER],
+    agentTypes: [AgentType.CEO, AgentType.TOKEN_DEPLOYER, AgentType.TRADER],
     neuralCapacity: 2048,
     cognitiveVariance: 0.8,
     category: PresetCategory.MEME,
-    icon: "🚀"
+    icon: "🚀",
+    ceoPersonality: CEOPersonalityTrait.AGGRESSIVE,
+    ceoStrategy: "Maximize viral potential through rapid token deployment and aggressive trading strategies"
   },
   {
     id: "nft-factory",
     name: "NFT Factory",
     description: "Launch and manage an NFT collection with automated minting",
-    agentTypes: [AgentType.COLLECTION_DEPLOYER, AgentType.NFT_MINTER],
+    agentTypes: [AgentType.CEO, AgentType.COLLECTION_DEPLOYER, AgentType.NFT_MINTER],
     neuralCapacity: 3072,
     cognitiveVariance: 0.7,
     category: PresetCategory.NFT,
-    icon: "🎨"
+    icon: "🎨",
+    ceoPersonality: CEOPersonalityTrait.INNOVATIVE,
+    ceoStrategy: "Create unique and valuable NFT collections through innovative artistic direction"
   },
   {
     id: "defi-yield",
     name: "DeFi Yield",
     description: "Optimize yield farming across multiple protocols",
-    agentTypes: [AgentType.TRADER, AgentType.LENDER],
+    agentTypes: [AgentType.CEO, AgentType.TRADER, AgentType.LENDER],
     neuralCapacity: 4096,
     cognitiveVariance: 0.9,
     category: PresetCategory.YIELD,
-    icon: "💰"
+    icon: "💰",
+    ceoPersonality: CEOPersonalityTrait.ANALYTICAL,
+    ceoStrategy: "Maximize yield through data-driven analysis and risk-managed lending strategies"
   }
 ];
 
@@ -63,7 +69,7 @@ export default function PresetConfigs({ onSelectPreset }: PresetConfigsProps) {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {presets.map((preset) => {
         const CategoryIcon = categoryIcons[preset.category];
-        
+
         return (
           <motion.div
             key={preset.id}
@@ -98,6 +104,14 @@ export default function PresetConfigs({ onSelectPreset }: PresetConfigsProps) {
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Cognitive Variance:</span>
                     <span className="font-medium">{(preset.cognitiveVariance * 100).toFixed(0)}%</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">CEO Personality:</span>
+                    <span className="font-medium">{preset.ceoPersonality?.toLowerCase()}</span>
+                  </div>
+                  <div className="mt-2 text-sm text-muted-foreground">
+                    <p className="font-medium mb-1">CEO Strategy:</p>
+                    <p className="text-xs">{preset.ceoStrategy}</p>
                   </div>
                   <div className="flex flex-wrap gap-2 mt-4">
                     {preset.agentTypes.map((type) => (

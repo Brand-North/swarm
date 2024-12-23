@@ -14,6 +14,7 @@ import NetworkVisualization from "@/components/visualizations/NetworkVisualizati
 import PresetConfigs from "@/components/presets/PresetConfigs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import DeploymentWizard from "@/components/wizard/DeploymentWizard";
 
 const agents = [
   {
@@ -75,6 +76,7 @@ export default function LaunchSwarm() {
   const [riskTolerance, setRiskTolerance] = useState(0.5);
   const [innovationFactor, setInnovationFactor] = useState(0.5);
   const [decisionSpeed, setDecisionSpeed] = useState(0.5);
+  const [showWizard, setShowWizard] = useState(true);
 
   const toggleAgent = (type: AgentType) => {
     setSelectedAgents(prev =>
@@ -92,7 +94,6 @@ export default function LaunchSwarm() {
     setSwarmPurpose(preset.description);
     if (preset.ceoPersonality) {
       setCeoPersonality(preset.ceoPersonality);
-      // Set default personality metrics based on the CEO personality type
       switch (preset.ceoPersonality) {
         case CEOPersonalityTrait.AGGRESSIVE:
           setRiskTolerance(0.8);
@@ -109,7 +110,6 @@ export default function LaunchSwarm() {
           setInnovationFactor(0.9);
           setDecisionSpeed(0.7);
           break;
-        // Add more cases as needed
       }
     }
     setActiveTab("custom");
@@ -145,10 +145,23 @@ export default function LaunchSwarm() {
       description: `Initializing ${selectedAgents.length} agents for ${swarmName}'s mission...`
     });
 
-    // Simulate deployment delay
     setTimeout(() => {
       setIsDeploying(false);
     }, 5000);
+  };
+
+  const handleWizardComplete = (wizardData: any) => {
+    if (wizardData.selectedPreset) {
+      handlePresetSelect(wizardData.selectedPreset);
+    }
+
+    setCeoGoal(wizardData.ceoConfiguration.goal);
+    setCeoPersonality(wizardData.ceoConfiguration.personality);
+    setRiskTolerance(wizardData.ceoConfiguration.riskTolerance);
+    setInnovationFactor(wizardData.ceoConfiguration.innovationFactor);
+    setDecisionSpeed(wizardData.ceoConfiguration.decisionSpeed);
+
+    setShowWizard(false);
   };
 
   return (
@@ -165,214 +178,230 @@ export default function LaunchSwarm() {
           </p>
         </motion.div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="presets">Quick Deploy Presets</TabsTrigger>
-            <TabsTrigger value="custom">Custom Configuration</TabsTrigger>
-          </TabsList>
+        {showWizard ? (
+          <DeploymentWizard
+            onComplete={handleWizardComplete}
+            onCancel={() => setShowWizard(false)}
+          />
+        ) : (
+          <>
+            <Button
+              onClick={() => setShowWizard(true)}
+              variant="outline"
+              className="mb-6"
+            >
+              Back to Wizard
+            </Button>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="presets">Quick Deploy Presets</TabsTrigger>
+                <TabsTrigger value="custom">Custom Configuration</TabsTrigger>
+              </TabsList>
 
-          <TabsContent value="presets" className="mt-6">
-            <PresetConfigs onSelectPreset={handlePresetSelect} />
-          </TabsContent>
+              <TabsContent value="presets" className="mt-6">
+                <PresetConfigs onSelectPreset={handlePresetSelect} />
+              </TabsContent>
 
-          <TabsContent value="custom">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Swarm Configuration</CardTitle>
-                  <CardDescription>Configure your neural swarm parameters</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Swarm Designation</label>
-                    <Input
-                      placeholder="Name your swarm"
-                      value={swarmName}
-                      onChange={(e) => setSwarmName(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Neural Blueprint</label>
-                    <Input
-                      placeholder="Define your swarm's mission"
-                      value={swarmPurpose}
-                      onChange={(e) => setSwarmPurpose(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">CEO's Strategic Goal</label>
-                    <Input
-                      placeholder="Define the goal for your AI CEO"
-                      value={ceoGoal}
-                      onChange={(e) => setCeoGoal(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">CEO Personality</label>
-                    <Select
-                      value={ceoPersonality}
-                      onValueChange={setCeoPersonality}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select personality type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Object.entries(CEOPersonalityTrait).map(([key, value]) => (
-                          <SelectItem key={key} value={value}>
-                            {value.charAt(0) + value.slice(1).toLowerCase()}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+              <TabsContent value="custom">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Swarm Configuration</CardTitle>
+                      <CardDescription>Configure your neural swarm parameters</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Swarm Designation</label>
+                        <Input
+                          placeholder="Name your swarm"
+                          value={swarmName}
+                          onChange={(e) => setSwarmName(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Neural Blueprint</label>
+                        <Input
+                          placeholder="Define your swarm's mission"
+                          value={swarmPurpose}
+                          onChange={(e) => setSwarmPurpose(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">CEO's Strategic Goal</label>
+                        <Input
+                          placeholder="Define the goal for your AI CEO"
+                          value={ceoGoal}
+                          onChange={(e) => setCeoGoal(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">CEO Personality</label>
+                        <Select
+                          value={ceoPersonality}
+                          onValueChange={setCeoPersonality}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select personality type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(CEOPersonalityTrait).map(([key, value]) => (
+                              <SelectItem key={key} value={value}>
+                                {value.charAt(0) + value.slice(1).toLowerCase()}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Risk Tolerance</label>
-                    <Slider
-                      value={[riskTolerance * 100]}
-                      onValueChange={([value]) => setRiskTolerance(value / 100)}
-                      max={100}
-                      min={0}
-                      step={10}
-                      className="py-2"
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      {riskTolerance < 0.3 ? "Conservative" : 
-                       riskTolerance < 0.7 ? "Balanced" : "Aggressive"}
-                    </p>
-                  </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Risk Tolerance</label>
+                        <Slider
+                          value={[riskTolerance * 100]}
+                          onValueChange={([value]) => setRiskTolerance(value / 100)}
+                          max={100}
+                          min={0}
+                          step={10}
+                          className="py-2"
+                        />
+                        <p className="text-sm text-muted-foreground">
+                          {riskTolerance < 0.3 ? "Conservative" :
+                            riskTolerance < 0.7 ? "Balanced" : "Aggressive"}
+                        </p>
+                      </div>
 
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Innovation Factor</label>
-                    <Slider
-                      value={[innovationFactor * 100]}
-                      onValueChange={([value]) => setInnovationFactor(value / 100)}
-                      max={100}
-                      min={0}
-                      step={10}
-                      className="py-2"
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      {innovationFactor < 0.3 ? "Traditional" : 
-                       innovationFactor < 0.7 ? "Balanced" : "Disruptive"}
-                    </p>
-                  </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Innovation Factor</label>
+                        <Slider
+                          value={[innovationFactor * 100]}
+                          onValueChange={([value]) => setInnovationFactor(value / 100)}
+                          max={100}
+                          min={0}
+                          step={10}
+                          className="py-2"
+                        />
+                        <p className="text-sm text-muted-foreground">
+                          {innovationFactor < 0.3 ? "Traditional" :
+                            innovationFactor < 0.7 ? "Balanced" : "Disruptive"}
+                        </p>
+                      </div>
 
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Decision Speed</label>
-                    <Slider
-                      value={[decisionSpeed * 100]}
-                      onValueChange={([value]) => setDecisionSpeed(value / 100)}
-                      max={100}
-                      min={0}
-                      step={10}
-                      className="py-2"
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      {decisionSpeed < 0.3 ? "Methodical" : 
-                       decisionSpeed < 0.7 ? "Balanced" : "Swift"}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Neural Capacity: {neuralCapacity}</label>
-                    <Slider
-                      value={[neuralCapacity]}
-                      onValueChange={([value]) => setNeuralCapacity(value)}
-                      max={4096}
-                      min={1024}
-                      step={256}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Cognitive Variance: {cognitiveVariance}</label>
-                    <Slider
-                      value={[cognitiveVariance * 100]}
-                      onValueChange={([value]) => setCognitiveVariance(value / 100)}
-                      max={100}
-                      min={10}
-                      step={10}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Decision Speed</label>
+                        <Slider
+                          value={[decisionSpeed * 100]}
+                          onValueChange={([value]) => setDecisionSpeed(value / 100)}
+                          max={100}
+                          min={0}
+                          step={10}
+                          className="py-2"
+                        />
+                        <p className="text-sm text-muted-foreground">
+                          {decisionSpeed < 0.3 ? "Methodical" :
+                            decisionSpeed < 0.7 ? "Balanced" : "Swift"}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Neural Capacity: {neuralCapacity}</label>
+                        <Slider
+                          value={[neuralCapacity]}
+                          onValueChange={([value]) => setNeuralCapacity(value)}
+                          max={4096}
+                          min={1024}
+                          step={256}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Cognitive Variance: {cognitiveVariance}</label>
+                        <Slider
+                          value={[cognitiveVariance * 100]}
+                          onValueChange={([value]) => setCognitiveVariance(value / 100)}
+                          max={100}
+                          min={10}
+                          step={10}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Swarm Agents</CardTitle>
-                  <CardDescription>Choose your meme-powered blockchain agents</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {agents.map((agent) => (
-                    <motion.div
-                      key={agent.type}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <Card
-                        className={`cursor-pointer transition-colors ${
-                          selectedAgents.includes(agent.type)
-                            ? "border-primary bg-primary/10"
-                            : ""
-                        }`}
-                        onClick={() => toggleAgent(agent.type)}
-                      >
-                        <CardHeader className="py-4">
-                          <div className="flex items-center gap-3">
-                            <agent.icon className="w-6 h-6 text-primary" />
-                            <div>
-                              <CardTitle className="text-lg">{agent.name}</CardTitle>
-                              <CardDescription>
-                                <span className="font-medium text-primary/80 block">{agent.role}</span>
-                                <span className="block">{agent.description}</span>
-                              </CardDescription>
-                            </div>
-                          </div>
-                        </CardHeader>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </CardContent>
-              </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Swarm Agents</CardTitle>
+                      <CardDescription>Choose your meme-powered blockchain agents</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {agents.map((agent) => (
+                        <motion.div
+                          key={agent.type}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <Card
+                            className={`cursor-pointer transition-colors ${
+                              selectedAgents.includes(agent.type)
+                                ? "border-primary bg-primary/10"
+                                : ""
+                            }`}
+                            onClick={() => toggleAgent(agent.type)}
+                          >
+                            <CardHeader className="py-4">
+                              <div className="flex items-center gap-3">
+                                <agent.icon className="w-6 h-6 text-primary" />
+                                <div>
+                                  <CardTitle className="text-lg">{agent.name}</CardTitle>
+                                  <CardDescription>
+                                    <span className="font-medium text-primary/80 block">{agent.role}</span>
+                                    <span className="block">{agent.description}</span>
+                                  </CardDescription>
+                                </div>
+                              </div>
+                            </CardHeader>
+                          </Card>
+                        </motion.div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+            </Tabs>
+
+            {selectedAgents.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <AgentHeatMap selectedAgents={selectedAgents} />
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <NetworkVisualization
+                    selectedAgents={selectedAgents}
+                    isDeploying={isDeploying}
+                  />
+                </motion.div>
+              </div>
+            )}
+
+            <div className="flex flex-col items-center gap-4">
+              <WalletMultiButton />
+              <Button
+                size="lg"
+                onClick={deploySwarm}
+                className="bg-primary hover:bg-primary/90 w-full max-w-md"
+                disabled={isDeploying || !connected || selectedAgents.length === 0}
+              >
+                {isDeploying
+                  ? "Deploying Neural Swarm..."
+                  : connected
+                    ? "Deploy Neural Swarm"
+                    : "Connect Wallet to Deploy"}
+              </Button>
             </div>
-          </TabsContent>
-        </Tabs>
-
-        {selectedAgents.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <AgentHeatMap selectedAgents={selectedAgents} />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <NetworkVisualization
-                selectedAgents={selectedAgents}
-                isDeploying={isDeploying}
-              />
-            </motion.div>
-          </div>
+          </>
         )}
-
-        <div className="flex flex-col items-center gap-4">
-          <WalletMultiButton />
-          <Button
-            size="lg"
-            onClick={deploySwarm}
-            className="bg-primary hover:bg-primary/90 w-full max-w-md"
-            disabled={isDeploying || !connected || selectedAgents.length === 0}
-          >
-            {isDeploying
-              ? "Deploying Neural Swarm..."
-              : connected
-              ? "Deploy Neural Swarm"
-              : "Connect Wallet to Deploy"}
-          </Button>
-        </div>
       </div>
     </div>
   );

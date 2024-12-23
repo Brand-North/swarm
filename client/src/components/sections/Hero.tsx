@@ -8,7 +8,7 @@ export default function Hero() {
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/20 to-background z-0" />
 
-      {/* Neural network background */}
+      {/* Star field background */}
       <div 
         className="absolute inset-0 opacity-20 z-0 bg-cover bg-center"
         style={{
@@ -23,13 +23,14 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
           className="text-center"
         >
+          <div className="mb-2 text-sm uppercase tracking-wider text-primary/80">
+            Decentralized AI Agents Working Together
+          </div>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
-            Swarm AI Agents:<br/>
-            Together We Thrive
+            swarmintelligenceai
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-muted-foreground max-w-3xl mx-auto">
-            Where one agent is good, a swarm of AI agents working in perfect harmony on Solana blockchain is unstoppable. 
-            Deploy intelligent swarms that think, collaborate, and deliver results at lightning speed.
+            The Power of Many—Swarm AI Agents That Work, Think, and Deliver Together
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
             <Link href="/launch">

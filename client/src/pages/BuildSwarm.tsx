@@ -4,22 +4,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { characters } from "@/data/characters";
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Character } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-import { swarmTokenService } from "@/services/swarm-token";
+import { swarmAgentService } from "@/services/swarm-agents";
+import type { SwarmAgent, AgentType } from "@/types/agents";
 
 export default function BuildSwarm() {
   const { connect, connected, connecting, publicKey } = useWallet();
-  const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
+  const [selectedAgents, setSelectedAgents] = useState<AgentType[]>([]);
+  const [swarmName, setSwarmName] = useState("");
+  const [swarmDescription, setSwarmDescription] = useState("");
   const [deploying, setDeploying] = useState(false);
   const { toast } = useToast();
+  const agents = swarmAgentService.getAvailableAgents();
 
   // Initialize service when wallet is connected
   useEffect(() => {
     if (connected && publicKey) {
-      swarmTokenService.initialize(publicKey)
+      swarmAgentService.initialize(publicKey)
         .catch(error => {
           console.error("Service initialization failed:", error);
           toast({
@@ -31,11 +33,11 @@ export default function BuildSwarm() {
     }
   }, [connected, publicKey, toast]);
 
-  const handleAgentSelection = (name: string) => {
+  const handleAgentSelection = (type: AgentType) => {
     setSelectedAgents(prev => 
-      prev.includes(name) 
-        ? prev.filter(agent => agent !== name)
-        : [...prev, name]
+      prev.includes(type)
+        ? prev.filter(agent => agent !== type)
+        : [...prev, type]
     );
   };
 
@@ -81,21 +83,40 @@ export default function BuildSwarm() {
 
     setDeploying(true);
     try {
-      // Deploy token first
-      const tokenResult = await swarmTokenService.deployToken();
-      if (!tokenResult.success) {
-        throw new Error(tokenResult.error);
-      }
+      // Deploy agents in sequence based on their type
+      const deploymentResults = await Promise.all(
+        selectedAgents.map(async (agentType) => {
+          const agent = swarmAgentService.getAgent(agentType);
+          let result = '';
 
-      // Create swarm with selected agents
-      const swarmResult = await swarmTokenService.createSwarm(selectedAgents);
-      if (!swarmResult.success) {
-        throw new Error(swarmResult.error);
-      }
+          // Example deployment based on agent type
+          switch (agentType) {
+            case "token-deployer":
+              result = await agent.capabilities.deployToken(9, "Swarm Token", "SWARM", 1000000);
+              break;
+            case "collection-deployer":
+              result = await agent.capabilities.deployCollection(
+                "Swarm Collection",
+                "SWARM",
+                "https://arweave.net/metadata.json",
+                500
+              );
+              break;
+            // Add other agent type deployments as needed
+          }
+
+          return {
+            type: agentType,
+            address: result,
+          };
+        })
+      );
 
       toast({
         title: "Success",
-        description: `Swarm deployed successfully!\nToken: ${tokenResult.tokenAddress}\nCollection: ${swarmResult.collectionAddress}`,
+        description: `Swarm deployed successfully!\n${deploymentResults
+          .map(r => `${r.type}: ${r.address}`)
+          .join('\n')}`,
       });
     } catch (error) {
       console.error("Deployment failed:", error);
@@ -131,11 +152,19 @@ export default function BuildSwarm() {
               <CardContent className="space-y-4">
                 <div>
                   <label className="text-sm font-medium mb-2 block">Swarm Designation</label>
-                  <Input placeholder="Enter swarm name" />
+                  <Input 
+                    placeholder="Enter swarm name"
+                    value={swarmName}
+                    onChange={(e) => setSwarmName(e.target.value)}
+                  />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">Neural Blueprint</label>
-                  <Textarea placeholder="Describe your swarm's purpose" />
+                  <Textarea 
+                    placeholder="Describe your swarm's purpose"
+                    value={swarmDescription}
+                    onChange={(e) => setSwarmDescription(e.target.value)}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -147,24 +176,24 @@ export default function BuildSwarm() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {characters.map((character: Character) => (
+                  {Object.entries(agents).map(([type, agent]: [string, SwarmAgent]) => (
                     <Card 
-                      key={character.name}
+                      key={type}
                       className={`cursor-pointer transition-colors ${
-                        selectedAgents.includes(character.name) 
-                          ? 'border-primary' 
+                        selectedAgents.includes(type as AgentType)
+                          ? 'border-primary'
                           : 'border-border'
                       }`}
-                      onClick={() => handleAgentSelection(character.name)}
+                      onClick={() => handleAgentSelection(type as AgentType)}
                     >
                       <CardContent className="p-4">
                         <img 
-                          src={character.image} 
-                          alt={character.name} 
+                          src={agent.image}
+                          alt={agent.name}
                           className="w-20 h-20 rounded-full mx-auto mb-4"
                         />
-                        <h3 className="font-bold text-center mb-1">{character.name}</h3>
-                        <p className="text-sm text-center text-muted-foreground">{character.role}</p>
+                        <h3 className="font-bold text-center mb-1">{agent.name}</h3>
+                        <p className="text-sm text-center text-muted-foreground">{agent.role}</p>
                       </CardContent>
                     </Card>
                   ))}

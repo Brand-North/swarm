@@ -47,17 +47,12 @@ export class SwarmTokenService {
         throw new Error("Service not initialized. Please connect wallet first.");
       }
 
-      // Create token with specified parameters
-      const token = await this.agent.deployToken({
-        decimals,
-        initialSupply: supply,
-        name: "Swarm Token",
-        symbol: "SWARM",
-      });
+      // Deploy token with specified parameters
+      const { mint } = await this.agent.deployToken(decimals);
 
       return {
         success: true,
-        tokenAddress: token.address.toBase58(),
+        tokenAddress: mint.toBase58(),
       };
     } catch (error) {
       console.error("Token deployment failed:", error);
@@ -75,9 +70,8 @@ export class SwarmTokenService {
       }
 
       // Create a collection for the swarm
-      const collection = await this.agent.deployCollection({
+      const { mint: collectionMint } = await this.agent.deployCollection({
         name: "AI Swarm Collection",
-        symbol: "AISWARM",
         uri: "https://arweave.net/metadata.json",
         sellerFeeBasisPoints: 500, // 5% royalty
       });
@@ -85,18 +79,20 @@ export class SwarmTokenService {
       // Initialize swarm tools and register agents
       const tools = createSolanaTools(this.agent);
 
+      // For each agent, mint an NFT in the collection
       for (const agent of agents) {
-        await tools.deployNFT({
-          name: agent,
-          symbol: "SWARM",
-          uri: `https://arweave.net/${agent}.json`,
-          collection: collection.address,
-        });
+        await this.agent.mintCollectionNFT(
+          collectionMint,
+          {
+            name: agent,
+            uri: `https://arweave.net/${agent}.json`,
+          }
+        );
       }
 
       return {
         success: true,
-        collectionAddress: collection.address.toBase58(),
+        collectionAddress: collectionMint.toBase58(),
       };
     } catch (error) {
       console.error("Swarm creation failed:", error);

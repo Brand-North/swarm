@@ -165,6 +165,10 @@ export default function LaunchSwarm() {
     setShowWizard(false);
   };
 
+  const handlePersonalityChange = (value: string) => {
+    setCeoPersonality(value as CEOPersonalityTrait);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-16">
@@ -239,7 +243,7 @@ export default function LaunchSwarm() {
                         <label className="text-sm font-medium mb-2 block">CEO Personality</label>
                         <Select
                           value={ceoPersonality}
-                          onValueChange={setCeoPersonality}
+                          onValueChange={(value: string) => handlePersonalityChange(value)}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select personality type" />

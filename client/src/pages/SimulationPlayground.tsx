@@ -1,16 +1,15 @@
 import { useState } from "react";
-import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useWallet } from "@solana/wallet-adapter-react";
 import BlockchainVisualizer from "@/components/visualizations/BlockchainVisualizer";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export default function SimulationPlayground() {
   const { toast } = useToast();
-  const { connected, publicKey } = useWallet();
+  const { connected } = useWallet();
   const [transactionSpeed, setTransactionSpeed] = useState<number>(1000);
   const [isSimulating, setIsSimulating] = useState(false);
 
@@ -25,7 +24,6 @@ export default function SimulationPlayground() {
     }
 
     setIsSimulating(true);
-    // Simulation logic will be added here
   };
 
   return (
@@ -75,7 +73,11 @@ export default function SimulationPlayground() {
               <CardDescription>Real-time blockchain interaction visualization</CardDescription>
             </CardHeader>
             <CardContent>
-              <BlockchainVisualizer isActive={isSimulating} />
+              <BlockchainVisualizer 
+                isActive={isSimulating}
+                width={600}
+                height={400}
+              />
             </CardContent>
           </Card>
         </div>

@@ -15,31 +15,36 @@ const agents = [
     name: "Tony Soprano",
     description: "Strategic Leader - Deploys tokens and manages operations",
     type: AgentType.TOKEN_DEPLOYER,
-    icon: Network
+    icon: Network,
+    role: "The Boss"
   },
   {
     name: "Carmela Soprano",
     description: "The Matriarch - Handles NFT collection deployment",
     type: AgentType.COLLECTION_DEPLOYER,
-    icon: Shield
+    icon: Shield,
+    role: "Collection Manager"
   },
   {
     name: "Paulie Walnuts",
     description: "The Enforcer - Executes trades and manages assets",
     type: AgentType.TRADER,
-    icon: FileCode2
+    icon: FileCode2,
+    role: "Asset Manager"
   },
   {
     name: "Christopher Moltisanti",
     description: "The Protégé - Mints and manages NFTs",
     type: AgentType.NFT_MINTER,
-    icon: Brain
+    icon: Brain,
+    role: "NFT Specialist"
   },
   {
     name: "Dr. Jennifer Melfi",
     description: "The Therapist - Handles lending operations",
     type: AgentType.LENDER,
-    icon: Database
+    icon: Database,
+    role: "Finance Manager"
   }
 ];
 
@@ -79,10 +84,9 @@ export default function LaunchSwarm() {
       return;
     }
 
-    // TODO: Implement swarm deployment using Solana Agent Kit
     toast({
       title: "Deploying Neural Swarm",
-      description: `Initializing ${selectedAgents.length} agents...`
+      description: `Initializing ${selectedAgents.length} agents under ${swarmName}'s command...`
     });
   };
 
@@ -110,7 +114,7 @@ export default function LaunchSwarm() {
               <div>
                 <label className="text-sm font-medium mb-2 block">Swarm Designation</label>
                 <Input
-                  placeholder="Enter swarm name"
+                  placeholder="Enter your family's name"
                   value={swarmName}
                   onChange={(e) => setSwarmName(e.target.value)}
                 />
@@ -118,7 +122,7 @@ export default function LaunchSwarm() {
               <div>
                 <label className="text-sm font-medium mb-2 block">Neural Blueprint</label>
                 <Input
-                  placeholder="Describe your swarm's purpose"
+                  placeholder="Define your family's mission"
                   value={swarmPurpose}
                   onChange={(e) => setSwarmPurpose(e.target.value)}
                 />
@@ -148,8 +152,8 @@ export default function LaunchSwarm() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Agent Selection</CardTitle>
-              <CardDescription>Choose your neural agents</CardDescription>
+              <CardTitle>The Family</CardTitle>
+              <CardDescription>Choose your crew members</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {agents.map((agent) => (
@@ -171,7 +175,10 @@ export default function LaunchSwarm() {
                         <agent.icon className="w-6 h-6 text-primary" />
                         <div>
                           <CardTitle className="text-lg">{agent.name}</CardTitle>
-                          <CardDescription>{agent.description}</CardDescription>
+                          <CardDescription>
+                            <div className="font-medium text-primary/80">{agent.role}</div>
+                            {agent.description}
+                          </CardDescription>
                         </div>
                       </div>
                     </CardHeader>
@@ -191,7 +198,7 @@ export default function LaunchSwarm() {
             className="bg-primary hover:bg-primary/90 w-full max-w-md"
             disabled={!connected || selectedAgents.length === 0}
           >
-            Deploy Neural Swarm
+            {connected ? "Deploy The Family" : "Connect Wallet to Deploy"}
           </Button>
         </div>
       </div>

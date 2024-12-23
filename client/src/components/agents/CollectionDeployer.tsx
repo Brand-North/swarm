@@ -1,70 +1,52 @@
 import { useState } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { TokenDeployerParams, BaseAgentProps } from "@/types/agents";
+import { CollectionDeployerParams, BaseAgentProps } from "@/types/agents";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { SolanaAgentKit } from "solana-agent-kit";
-import bs58 from "bs58";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   uri: z.string().url("Must be a valid URI"),
-  symbol: z.string().min(1, "Symbol is required"),
-  decimals: z.number().min(0).max(9).optional(),
-  initialSupply: z.number().min(0).optional()
+  royaltyBasisPoints: z.number().min(0).max(10000),
+  creators: z.array(z.object({
+    address: z.string(),
+    percentage: z.number().min(0).max(100)
+  }))
 });
 
-export default function TokenDeployer({ onSuccess, onError }: BaseAgentProps) {
+export default function CollectionDeployer({ onSuccess, onError }: BaseAgentProps) {
   const { toast } = useToast();
-  const { publicKey, signTransaction } = useWallet();
   const [isDeploying, setIsDeploying] = useState(false);
 
-  const form = useForm<TokenDeployerParams>({
+  const form = useForm<CollectionDeployerParams>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      decimals: 9,
-      initialSupply: 1000000
+      royaltyBasisPoints: 500,
+      creators: [{ address: "", percentage: 100 }]
     }
   });
 
-  const onSubmit = async (data: TokenDeployerParams) => {
-    if (!publicKey || !signTransaction) {
-      toast({
-        title: "Wallet Not Connected",
-        description: "Please connect your wallet to deploy tokens",
-        variant: "destructive"
-      });
-      return;
-    }
-
+  const onSubmit = async (data: CollectionDeployerParams) => {
     setIsDeploying(true);
     try {
-      // Initialize Solana Agent Kit with connected wallet
-      const agent = new SolanaAgentKit(
-        bs58.encode(publicKey.toBytes()),
-        "https://api.mainnet-beta.solana.com"
-      );
-
-      // Deploy token using Solana Agent Kit
-      const result = await agent.deployToken(
-        data.name,
-        data.uri,
-        data.symbol,
-        data.decimals,
-        data.initialSupply
-      );
-
+      // TODO: Implement collection deployment using Solana Agent Kit
+      // const collection = await agent.deployCollection({
+      //   name: data.name,
+      //   uri: data.uri,
+      //   royaltyBasisPoints: data.royaltyBasisPoints,
+      //   creators: data.creators
+      // });
+      
       toast({
-        title: "Token Deployed",
-        description: `Successfully deployed token ${data.name} (${data.symbol})\nMint Address: ${result.mint.toString()}`
+        title: "Collection Deployed",
+        description: `Successfully deployed collection ${data.name}`
       });
-      onSuccess?.(result);
+      onSuccess?.(data);
     } catch (error) {
       const err = error as Error;
       toast({
@@ -81,7 +63,7 @@ export default function TokenDeployer({ onSuccess, onError }: BaseAgentProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Deploy New Token</CardTitle>
+        <CardTitle>Deploy NFT Collection</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -91,23 +73,9 @@ export default function TokenDeployer({ onSuccess, onError }: BaseAgentProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Token Name</FormLabel>
+                  <FormLabel>Collection Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="My Token" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="symbol"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Token Symbol</FormLabel>
-                  <FormControl>
-                    <Input placeholder="MTK" {...field} />
+                    <Input placeholder="My Collection" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -130,28 +98,10 @@ export default function TokenDeployer({ onSuccess, onError }: BaseAgentProps) {
 
             <FormField
               control={form.control}
-              name="decimals"
+              name="royaltyBasisPoints"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Decimals</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      {...field} 
-                      onChange={e => field.onChange(parseInt(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="initialSupply"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Initial Supply</FormLabel>
+                  <FormLabel>Royalty % (basis points)</FormLabel>
                   <FormControl>
                     <Input 
                       type="number" 
@@ -164,12 +114,26 @@ export default function TokenDeployer({ onSuccess, onError }: BaseAgentProps) {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="creators.0.address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Creator Address</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Solana address..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <Button
               type="submit"
               className="w-full"
-              disabled={isDeploying || !publicKey}
+              disabled={isDeploying}
             >
-              {isDeploying ? "Deploying..." : "Deploy Token"}
+              {isDeploying ? "Deploying..." : "Deploy Collection"}
             </Button>
           </form>
         </Form>

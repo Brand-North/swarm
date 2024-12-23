@@ -1,13 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Link } from "wouter";
 
 export default function Hero() {
   return (
     <section className="min-h-screen relative flex items-center justify-center overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/20 to-background z-0" />
-
+      
       {/* Neural network background */}
       <div 
         className="absolute inset-0 opacity-20 z-0 bg-cover bg-center"
@@ -29,14 +28,12 @@ export default function Hero() {
           <p className="text-xl md:text-2xl mb-8 text-muted-foreground max-w-3xl mx-auto">
             Propaganda.ai revolutionizes the AI landscape through autonomous swarm deployment, enabling unprecedented collaboration and efficiency.
           </p>
-          <Link href="/build">
-            <Button 
-              size="lg"
-              className="text-lg px-8 py-6 bg-primary hover:bg-primary/90"
-            >
-              Launch Your Swarm
-            </Button>
-          </Link>
+          <Button 
+            size="lg"
+            className="text-lg px-8 py-6 bg-primary hover:bg-primary/90"
+          >
+            Launch Your Swarm
+          </Button>
         </motion.div>
       </div>
     </section>

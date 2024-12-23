@@ -8,6 +8,7 @@ export interface AgentConfig {
 }
 
 export const AgentType = {
+  CEO: "CEO",
   TOKEN_DEPLOYER: "TOKEN_DEPLOYER",
   COLLECTION_DEPLOYER: "COLLECTION_DEPLOYER",
   NFT_MINTER: "NFT_MINTER", 
@@ -43,6 +44,13 @@ export const PresetCategory = {
 } as const;
 
 export type PresetCategory = typeof PresetCategory[keyof typeof PresetCategory];
+
+// Add CEO specific types
+export interface CEOAgentParams {
+  goal: string;
+  strategy?: string;
+  delegatedAgents?: AgentType[];
+}
 
 // Token Deployer Agent Params
 export interface TokenDeployerParams {

@@ -8,12 +8,19 @@ import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { AgentType, type AgentConfig, SwarmPreset } from "@/types/agents";
-import { Network, Shield, FileCode2, Brain, Database } from "lucide-react";
+import { Network, Shield, FileCode2, Brain, Database, Crown } from "lucide-react";
 import AgentHeatMap from "@/components/visualizations/AgentHeatMap";
 import PresetConfigs from "@/components/presets/PresetConfigs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const agents = [
+  {
+    name: "DOGE CEO",
+    description: "First AI CEO on Solana - The visionary leader who coordinates and delegates tasks to other agents for maximum efficiency",
+    type: AgentType.CEO,
+    icon: Crown,
+    role: "Swarm Commander"
+  },
   {
     name: "DOGE Commander",
     description: "Much Token, Very Deploy - The OG meme coin leader who deploys new tokens with wisdom and wit",
@@ -54,9 +61,10 @@ const agents = [
 export default function LaunchSwarm() {
   const { toast } = useToast();
   const { connected } = useWallet();
-  const [selectedAgents, setSelectedAgents] = useState<AgentType[]>([]);
+  const [selectedAgents, setSelectedAgents] = useState<AgentType[]>([AgentType.CEO]);
   const [swarmName, setSwarmName] = useState("");
   const [swarmPurpose, setSwarmPurpose] = useState("");
+  const [ceoGoal, setCeoGoal] = useState("");
   const [neuralCapacity, setNeuralCapacity] = useState(2048);
   const [cognitiveVariance, setCognitiveVariance] = useState(0.9);
   const [activeTab, setActiveTab] = useState<string>("custom");
@@ -154,6 +162,14 @@ export default function LaunchSwarm() {
                       placeholder="Define your swarm's mission"
                       value={swarmPurpose}
                       onChange={(e) => setSwarmPurpose(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">CEO's Strategic Goal</label>
+                    <Input
+                      placeholder="Define the goal for your AI CEO"
+                      value={ceoGoal}
+                      onChange={(e) => setCeoGoal(e.target.value)}
                     />
                   </div>
                   <div>

@@ -1,26 +1,26 @@
 import { motion } from "framer-motion";
-import { Zap, Network, Shield, Rocket } from "lucide-react";
+import { Brain, Zap, Shield, Rocket } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 const features = [
   {
-    title: "Swarm Intelligence",
-    description: "Deploy decentralized swarms of AI agents that communicate, learn, and evolve together on Solana's high-performance network.",
-    icon: Network
+    title: "Neural Swarm Intelligence",
+    description: "Deploy autonomous swarms of AI agents that evolve, learn, and collaborate through decentralized neural networks on Solana.",
+    icon: Brain
   },
   {
-    title: "Lightning-Fast Execution",
-    description: "Leverage Solana's sub-second finality and minimal fees for real-time agent coordination and task execution.",
+    title: "Blockchain Synchronization",
+    description: "Leverage Solana's sub-second finality and minimal fees for real-time agent coordination and instant decision execution.",
     icon: Zap
   },
   {
-    title: "Secure & Transparent",
-    description: "Every agent interaction is recorded on-chain, ensuring complete transparency and immutable audit trails.",
+    title: "Quantum-Grade Security",
+    description: "Every agent interaction is cryptographically secured and recorded on-chain, ensuring unbreakable swarm integrity.",
     icon: Shield
   },
   {
-    title: "Scalable Performance",
-    description: "Seamlessly scale your swarm from a few agents to thousands, all operating in perfect synchronization.",
+    title: "Infinite Scalability",
+    description: "Scale your neural swarm from dozens to thousands of agents, all operating in perfect synchronization on Solana.",
     icon: Rocket
   }
 ];
@@ -35,23 +35,23 @@ export default function Features() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold mb-4">Power of the Swarm</h2>
-          <p className="text-xl text-muted-foreground">
-            Harness collective intelligence through decentralized collaboration
+          <h2 className="text-4xl font-semibold tracking-tight mb-4">Neural Network Dominance</h2>
+          <p className="text-xl text-muted-foreground font-light tracking-wide">
+            Harness collective intelligence through blockchain-powered neural swarms
           </p>
         </motion.div>
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
         >
           {features.map((feature, index) => (
-            <Card key={index} className="bg-card/50 backdrop-blur">
+            <Card key={index} className="bg-card/50 backdrop-blur border-primary/20">
               <CardHeader>
                 <feature.icon className="w-12 h-12 text-primary mb-4" />
-                <CardTitle className="text-2xl mb-2">{feature.title}</CardTitle>
-                <CardDescription className="text-lg">
+                <CardTitle className="text-2xl mb-2 tracking-tight">{feature.title}</CardTitle>
+                <CardDescription className="text-lg font-light">
                   {feature.description}
                 </CardDescription>
               </CardHeader>

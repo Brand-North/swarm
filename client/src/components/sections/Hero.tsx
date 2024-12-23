@@ -23,25 +23,25 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
           className="text-center"
         >
-          <div className="mb-2 text-sm uppercase tracking-wider text-primary/80">
+          <div className="mb-2 text-sm uppercase tracking-wider text-primary/80 font-light">
             Decentralized AI Agents Working Together
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+          <h1 className="text-5xl md:text-7xl font-semibold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60 font-sans">
             swarmintelligenceai
           </h1>
-          <p className="text-xl md:text-2xl mb-8 text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl mb-8 text-muted-foreground max-w-3xl mx-auto font-light tracking-wide">
             The Power of Many—Swarm AI Agents That Work, Think, and Deliver Together
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
             <Link href="/launch">
               <Button 
                 size="lg"
-                className="text-lg px-8 py-6 bg-primary hover:bg-primary/90"
+                className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 font-medium tracking-wide"
               >
                 Launch Your Swarm
               </Button>
             </Link>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground font-light tracking-wider">
               Powered by Solana's high-performance blockchain
             </div>
           </div>

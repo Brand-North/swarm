@@ -4,23 +4,23 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 
 const protocols = [
   {
-    title: "Quantum Neural Matrix",
-    description: "Advanced neural networks that leverage quantum computing principles for unprecedented pattern recognition and decision-making capabilities.",
+    title: "Swarm Intelligence",
+    description: "Unite around a shared vision as our agents become your swarm, working together towards your mission with unmatched coordination.",
     icon: Network
   },
   {
-    title: "Swarm Defense Grid",
-    description: "Self-evolving security protocols that adapt and strengthen through collective intelligence, protecting your neural network 24/7.",
+    title: "Collective Growth",
+    description: "As our database expands and the community contributes knowledge, your swarm becomes exponentially more effective.",
     icon: Shield
   },
   {
-    title: "Autonomous Learning Engine",
-    description: "Sophisticated machine learning algorithms that enable continuous improvement through swarm-based knowledge sharing.",
+    title: "Agent Creation",
+    description: "Soon, you'll be able to create your own specialized agents, turning a single AI worker into an entire army at your command.",
     icon: FileVideo
   },
   {
-    title: "Blockchain Neural Core",
-    description: "Decentralized data processing system utilizing Solana's high-performance network for real-time neural computations.",
+    title: "Harmonic Symphony",
+    description: "When the entire community contributes to shared knowledge, we don't just create a swarm—we achieve true harmony.",
     icon: Database
   }
 ];
@@ -35,7 +35,7 @@ export default function Protocols() {
           viewport={{ once: true }}
           className="text-4xl font-semibold tracking-tight text-center mb-16"
         >
-          Neural Network Protocols
+          The Future of Work
         </motion.h2>
 
         <motion.div

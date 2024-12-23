@@ -4,23 +4,23 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 
 const features = [
   {
-    title: "Specialized AI Workforce",
-    description: "Deploy highly specialized AI agents that can handle practically any task, working together in perfect coordination.",
+    title: "Insanely Effective Agents",
+    description: "We build specialized AI workers that can handle practically any task you throw at them, working together in perfect coordination.",
     icon: Users
   },
   {
-    title: "Never-Ending Productivity",
-    description: "Your AI swarm works 24/7, continuously learning and improving while maintaining laser focus on your mission.",
+    title: "Coordinated Force",
+    description: "Your AI swarm works 24/7, creating a unified force that never sleeps, continuously learning and improving.",
     icon: Cpu
   },
   {
-    title: "Built-in Kill Switch",
-    description: "Enterprise-grade control mechanisms ensure your AI swarm stays aligned with your goals and ethical boundaries.",
+    title: "Enterprise Control",
+    description: "With great AI power comes great responsibility. That's why we built a kill switch—keeping everything in perfect check.",
     icon: Shield
   },
   {
-    title: "Exponential Growth",
-    description: "As our shared knowledge base expands, your swarm becomes increasingly efficient at accomplishing your goals.",
+    title: "Community Knowledge",
+    description: "As our shared knowledge base expands, we accomplish goals faster and faster, achieving true swarm harmony.",
     icon: Rocket
   }
 ];
@@ -35,9 +35,9 @@ export default function Features() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-semibold tracking-tight mb-4">The Power of Many</h2>
+          <h2 className="text-4xl font-semibold tracking-tight mb-4">Democratizing AI</h2>
           <p className="text-xl text-muted-foreground font-light tracking-wide">
-            Turn a single AI worker into an entire agent army at your command
+            We're witnessing it right here, right now—specialized agents working together as one
           </p>
         </motion.div>
         <motion.div

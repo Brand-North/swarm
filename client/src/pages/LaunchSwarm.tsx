@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { AgentType, type AgentConfig } from "@/types/agents";
 import { Network, Shield, FileCode2, Brain, Database } from "lucide-react";
+import AgentHeatMap from "@/components/visualizations/AgentHeatMap";
 
 const agents = [
   {
@@ -58,7 +59,7 @@ export default function LaunchSwarm() {
   const [cognitiveVariance, setCognitiveVariance] = useState(0.9);
 
   const toggleAgent = (type: AgentType) => {
-    setSelectedAgents(prev => 
+    setSelectedAgents(prev =>
       prev.includes(type)
         ? prev.filter(t => t !== type)
         : [...prev, type]
@@ -162,7 +163,7 @@ export default function LaunchSwarm() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Card 
+                  <Card
                     className={`cursor-pointer transition-colors ${
                       selectedAgents.includes(agent.type)
                         ? "border-primary bg-primary/10"
@@ -189,9 +190,18 @@ export default function LaunchSwarm() {
           </Card>
         </div>
 
+        {selectedAgents.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <AgentHeatMap selectedAgents={selectedAgents} />
+          </motion.div>
+        )}
+
         <div className="flex flex-col items-center gap-4">
           <WalletMultiButton />
-
           <Button
             size="lg"
             onClick={deploySwarm}

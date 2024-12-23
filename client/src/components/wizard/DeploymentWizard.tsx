@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -33,14 +33,34 @@ export default function DeploymentWizard({ onComplete, onCancel }: DeploymentWiz
   const [innovationFactor, setInnovationFactor] = useState(0.5);
   const [decisionSpeed, setDecisionSpeed] = useState(0.5);
 
+  const isCurrentStepValid = useCallback(() => {
+    switch (currentStep) {
+      case 1:
+        return connected;
+      case 2:
+        return deploymentType === "preset" ? !!selectedPreset : true;
+      case 3:
+        return ceoName.length > 0 && ceoGoal.length > 0;
+      default:
+        return true;
+    }
+  }, [currentStep, connected, deploymentType, selectedPreset, ceoName, ceoGoal]);
+
   const handleNext = () => {
-    // Validate current step
     if (!isCurrentStepValid()) {
-      toast({
-        title: "Incomplete Step",
-        description: "Please complete all required actions before proceeding.",
-        variant: "destructive"
-      });
+      if (currentStep === 1 && !connected) {
+        toast({
+          title: "Wallet Not Connected",
+          description: "Please connect your Phantom wallet to continue",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Incomplete Step",
+          description: "Please complete all required actions before proceeding.",
+          variant: "destructive"
+        });
+      }
       return;
     }
 
@@ -70,27 +90,8 @@ export default function DeploymentWizard({ onComplete, onCancel }: DeploymentWiz
     }
   };
 
-  const isCurrentStepValid = () => {
-    switch (currentStep) {
-      case 1:
-        if (!connected) {
-          toast({
-            title: "Wallet Not Connected",
-            description: "Please connect your Phantom wallet to continue",
-            variant: "destructive"
-          });
-          return false;
-        }
-        // Here we would verify if the wallet has the required swarm token
-        // For now, we'll just check if wallet is connected
-        return connected;
-      case 2:
-        return deploymentType === "preset" ? !!selectedPreset : true;
-      case 3:
-        return ceoName && ceoGoal;
-      default:
-        return true;
-    }
+  const handlePersonalityChange = (value: string) => {
+    setCeoPersonality(value as CEOPersonalityTrait);
   };
 
   return (
@@ -115,9 +116,9 @@ export default function DeploymentWizard({ onComplete, onCancel }: DeploymentWiz
                 <div className="flex justify-center">
                   <WalletMultiButton />
                 </div>
-                {connected && (
+                {connected && publicKey && (
                   <div className="text-sm text-green-600 dark:text-green-400">
-                    ✓ Wallet connected: {publicKey?.toString().slice(0, 4)}...{publicKey?.toString().slice(-4)}
+                    ✓ Wallet connected: {publicKey.toString().slice(0, 4)}...{publicKey.toString().slice(-4)}
                   </div>
                 )}
               </div>
@@ -174,7 +175,7 @@ export default function DeploymentWizard({ onComplete, onCancel }: DeploymentWiz
               <label className="text-sm font-medium mb-2 block">Personality Type</label>
               <Select
                 value={ceoPersonality}
-                onValueChange={(value) => setCeoPersonality(value as CEOPersonalityTrait)}
+                onValueChange={handlePersonalityChange}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select personality type" />

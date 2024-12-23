@@ -7,13 +7,13 @@
 │   │   │   ├── ui/        # UI components (shadcn)
 │   │   │   ├── visualizations/  # Data visualization components
 │   │   │   └── wizard/    # Deployment wizard
-│   │   ├── hooks/         # Custom React hooks
+│   │   ├── hooks/        # Custom React hooks
 │   │   ├── lib/          # Utility functions
 │   │   ├── pages/        # Route pages
 │   │   └── types/        # TypeScript definitions
 ├── db/                    # Database configuration
 │   ├── migrations/       # Database migrations
 │   └── schema.ts         # Database schema
-├── server/               # Backend server
-│   ├── routes.ts         # API routes
-│   └── vite.ts          # Vite configuration
+└── server/               # Backend server
+    ├── routes.ts         # API routes
+    └── vite.ts          # Vite configuration

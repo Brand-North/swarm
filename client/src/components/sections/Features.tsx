@@ -27,16 +27,16 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="py-24 bg-background">
+    <section className="py-16 sm:py-24 bg-background">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
-          <h2 className="text-4xl font-semibold tracking-tight mb-4">Democratizing AI</h2>
-          <p className="text-xl text-muted-foreground font-light tracking-wide">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-4">Democratizing AI</h2>
+          <p className="text-lg sm:text-xl text-muted-foreground font-light tracking-wide px-4">
             We're witnessing it right here, right now—specialized agents working together as one
           </p>
         </motion.div>
@@ -44,14 +44,14 @@ export default function Features() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8"
         >
           {features.map((feature, index) => (
             <Card key={index} className="bg-card/50 backdrop-blur border-primary/20">
-              <CardHeader>
-                <feature.icon className="w-12 h-12 text-primary mb-4" />
-                <CardTitle className="text-2xl mb-2 tracking-tight">{feature.title}</CardTitle>
-                <CardDescription className="text-lg font-light">
+              <CardHeader className="p-4 sm:p-6">
+                <feature.icon className="w-10 h-10 sm:w-12 sm:h-12 text-primary mb-4" />
+                <CardTitle className="text-xl sm:text-2xl mb-2 tracking-tight">{feature.title}</CardTitle>
+                <CardDescription className="text-base sm:text-lg font-light">
                   {feature.description}
                 </CardDescription>
               </CardHeader>

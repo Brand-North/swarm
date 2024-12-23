@@ -12,39 +12,39 @@ import { Network, Shield, FileCode2, Brain, Database } from "lucide-react";
 
 const agents = [
   {
-    name: "Tony Soprano",
-    description: "Strategic Leader - Deploys tokens and manages operations",
+    name: "DOGE Commander",
+    description: "Much Token, Very Deploy - The OG meme coin leader who deploys new tokens with wisdom and wit",
     type: AgentType.TOKEN_DEPLOYER,
     icon: Network,
-    role: "The Boss"
+    role: "Token Architect"
   },
   {
-    name: "Carmela Soprano",
-    description: "The Matriarch - Handles NFT collection deployment",
+    name: "PEPE Master",
+    description: "Rare Collection Creator - The legendary NFT collection deployer, turning memes into digital art",
     type: AgentType.COLLECTION_DEPLOYER,
     icon: Shield,
-    role: "Collection Manager"
+    role: "Collection Maestro"
   },
   {
-    name: "Paulie Walnuts",
-    description: "The Enforcer - Executes trades and manages assets",
+    name: "SHIB Samurai",
+    description: "Trading Warrior - The fearless trader who navigates the volatile seas of token swaps",
     type: AgentType.TRADER,
     icon: FileCode2,
-    role: "Asset Manager"
+    role: "Trade Strategist"
   },
   {
-    name: "Christopher Moltisanti",
-    description: "The Protégé - Mints and manages NFTs",
+    name: "Bored APE Artist",
+    description: "NFT Virtuoso - The creative force behind unique NFT minting operations",
     type: AgentType.NFT_MINTER,
     icon: Brain,
-    role: "NFT Specialist"
+    role: "Mint Master"
   },
   {
-    name: "Dr. Jennifer Melfi",
-    description: "The Therapist - Handles lending operations",
+    name: "SUSHI Chef",
+    description: "DeFi Yield Master - The lending protocol expert who maximizes asset utilization",
     type: AgentType.LENDER,
     icon: Database,
-    role: "Finance Manager"
+    role: "Yield Optimizer"
   }
 ];
 
@@ -86,7 +86,7 @@ export default function LaunchSwarm() {
 
     toast({
       title: "Deploying Neural Swarm",
-      description: `Initializing ${selectedAgents.length} agents under ${swarmName}'s command...`
+      description: `Initializing ${selectedAgents.length} agents for ${swarmName}'s mission...`
     });
   };
 
@@ -114,7 +114,7 @@ export default function LaunchSwarm() {
               <div>
                 <label className="text-sm font-medium mb-2 block">Swarm Designation</label>
                 <Input
-                  placeholder="Enter your family's name"
+                  placeholder="Name your swarm"
                   value={swarmName}
                   onChange={(e) => setSwarmName(e.target.value)}
                 />
@@ -122,7 +122,7 @@ export default function LaunchSwarm() {
               <div>
                 <label className="text-sm font-medium mb-2 block">Neural Blueprint</label>
                 <Input
-                  placeholder="Define your family's mission"
+                  placeholder="Define your swarm's mission"
                   value={swarmPurpose}
                   onChange={(e) => setSwarmPurpose(e.target.value)}
                 />
@@ -152,8 +152,8 @@ export default function LaunchSwarm() {
 
           <Card>
             <CardHeader>
-              <CardTitle>The Family</CardTitle>
-              <CardDescription>Choose your crew members</CardDescription>
+              <CardTitle>Swarm Agents</CardTitle>
+              <CardDescription>Choose your meme-powered blockchain agents</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {agents.map((agent) => (
@@ -198,7 +198,7 @@ export default function LaunchSwarm() {
             className="bg-primary hover:bg-primary/90 w-full max-w-md"
             disabled={!connected || selectedAgents.length === 0}
           >
-            {connected ? "Deploy The Family" : "Connect Wallet to Deploy"}
+            {connected ? "Deploy Neural Swarm" : "Connect Wallet to Deploy"}
           </Button>
         </div>
       </div>

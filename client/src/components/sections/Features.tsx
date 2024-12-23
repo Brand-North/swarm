@@ -1,26 +1,26 @@
 import { motion } from "framer-motion";
-import { Brain, Zap, Shield, Rocket } from "lucide-react";
+import { Users, Cpu, Shield, Rocket } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 const features = [
   {
-    title: "Neural Swarm Intelligence",
-    description: "Deploy autonomous swarms of AI agents that evolve, learn, and collaborate through decentralized neural networks on Solana.",
-    icon: Brain
+    title: "Specialized AI Workforce",
+    description: "Deploy highly specialized AI agents that can handle practically any task, working together in perfect coordination.",
+    icon: Users
   },
   {
-    title: "Blockchain Synchronization",
-    description: "Leverage Solana's sub-second finality and minimal fees for real-time agent coordination and instant decision execution.",
-    icon: Zap
+    title: "Never-Ending Productivity",
+    description: "Your AI swarm works 24/7, continuously learning and improving while maintaining laser focus on your mission.",
+    icon: Cpu
   },
   {
-    title: "Quantum-Grade Security",
-    description: "Every agent interaction is cryptographically secured and recorded on-chain, ensuring unbreakable swarm integrity.",
+    title: "Built-in Kill Switch",
+    description: "Enterprise-grade control mechanisms ensure your AI swarm stays aligned with your goals and ethical boundaries.",
     icon: Shield
   },
   {
-    title: "Infinite Scalability",
-    description: "Scale your neural swarm from dozens to thousands of agents, all operating in perfect synchronization on Solana.",
+    title: "Exponential Growth",
+    description: "As our shared knowledge base expands, your swarm becomes increasingly efficient at accomplishing your goals.",
     icon: Rocket
   }
 ];
@@ -35,9 +35,9 @@ export default function Features() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-semibold tracking-tight mb-4">Neural Network Dominance</h2>
+          <h2 className="text-4xl font-semibold tracking-tight mb-4">The Power of Many</h2>
           <p className="text-xl text-muted-foreground font-light tracking-wide">
-            Harness collective intelligence through blockchain-powered neural swarms
+            Turn a single AI worker into an entire agent army at your command
           </p>
         </motion.div>
         <motion.div

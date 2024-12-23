@@ -30,7 +30,7 @@ export default function Hero() {
             swarmintelligenceai
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-muted-foreground max-w-3xl mx-auto font-light tracking-wide">
-            The Power of Many—Swarm AI Agents That Work, Think, and Deliver Together
+            Picture this: Not just one AI assistant, but an entire specialized workforce at your command. Welcome to the future of AI coordination.
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
             <Link href="/launch">
@@ -45,6 +45,14 @@ export default function Hero() {
               Powered by Solana's high-performance blockchain
             </div>
           </div>
+          <motion.blockquote 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="mt-12 text-lg italic text-muted-foreground max-w-2xl mx-auto"
+          >
+            "Swarm intelligence emerges when we unite around a shared vision. You set the goal—our agents become the swarm."
+          </motion.blockquote>
         </motion.div>
       </div>
     </section>

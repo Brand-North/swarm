@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChevronRight, ChevronLeft } from "lucide-react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import WizardStep from "./WizardStep";
 import { useToast } from "@/hooks/use-toast";
 import PresetConfigs from "@/components/presets/PresetConfigs";
@@ -18,10 +20,11 @@ interface DeploymentWizardProps {
 
 export default function DeploymentWizard({ onComplete, onCancel }: DeploymentWizardProps) {
   const { toast } = useToast();
+  const { connected, publicKey } = useWallet();
   const [currentStep, setCurrentStep] = useState(1);
   const [deploymentType, setDeploymentType] = useState<"preset" | "custom">("preset");
   const [selectedPreset, setSelectedPreset] = useState<SwarmPreset | null>(null);
-  
+
   // CEO Configuration
   const [ceoName, setCeoName] = useState("");
   const [ceoGoal, setCeoGoal] = useState("");
@@ -35,12 +38,12 @@ export default function DeploymentWizard({ onComplete, onCancel }: DeploymentWiz
     if (!isCurrentStepValid()) {
       toast({
         title: "Incomplete Step",
-        description: "Please fill in all required fields before proceeding.",
+        description: "Please complete all required actions before proceeding.",
         variant: "destructive"
       });
       return;
     }
-    
+
     if (currentStep < 4) {
       setCurrentStep(prev => prev + 1);
     } else {
@@ -70,10 +73,21 @@ export default function DeploymentWizard({ onComplete, onCancel }: DeploymentWiz
   const isCurrentStepValid = () => {
     switch (currentStep) {
       case 1:
-        return deploymentType === "preset" ? !!selectedPreset : true;
+        if (!connected) {
+          toast({
+            title: "Wallet Not Connected",
+            description: "Please connect your Phantom wallet to continue",
+            variant: "destructive"
+          });
+          return false;
+        }
+        // Here we would verify if the wallet has the required swarm token
+        // For now, we'll just check if wallet is connected
+        return connected;
       case 2:
+        return deploymentType === "preset" ? !!selectedPreset : true;
+      case 3:
         return ceoName && ceoGoal;
-      // Add validation for other steps
       default:
         return true;
     }
@@ -82,14 +96,43 @@ export default function DeploymentWizard({ onComplete, onCancel }: DeploymentWiz
   return (
     <div className="max-w-4xl mx-auto">
       <div className="space-y-6">
-        {/* Step 1: Choose Deployment Type */}
+        {/* Step 1: Connect Wallet */}
         <WizardStep
-          title="Choose Deployment Type"
-          description="Select between quick deploy presets or custom configuration"
+          title="Connect Your Wallet"
+          description="Connect your Phantom wallet to deploy and manage your swarm"
           currentStep={currentStep}
           stepNumber={1}
           isActive={currentStep === 1}
           isCompleted={currentStep > 1}
+        >
+          <div className="space-y-6">
+            <Card className="p-6">
+              <div className="text-center space-y-4">
+                <h3 className="text-lg font-medium">Connect Phantom Wallet</h3>
+                <p className="text-muted-foreground">
+                  Your wallet will be used to deploy and manage your AI swarm on Solana
+                </p>
+                <div className="flex justify-center">
+                  <WalletMultiButton />
+                </div>
+                {connected && (
+                  <div className="text-sm text-green-600 dark:text-green-400">
+                    ✓ Wallet connected: {publicKey?.toString().slice(0, 4)}...{publicKey?.toString().slice(-4)}
+                  </div>
+                )}
+              </div>
+            </Card>
+          </div>
+        </WizardStep>
+
+        {/* Step 2: Choose Deployment Type */}
+        <WizardStep
+          title="Choose Deployment Type"
+          description="Select between quick deploy presets or custom configuration"
+          currentStep={currentStep}
+          stepNumber={2}
+          isActive={currentStep === 2}
+          isCompleted={currentStep > 2}
         >
           <div className="space-y-4">
             <PresetConfigs
@@ -101,14 +144,14 @@ export default function DeploymentWizard({ onComplete, onCancel }: DeploymentWiz
           </div>
         </WizardStep>
 
-        {/* Step 2: Configure CEO */}
+        {/* Step 3: Configure CEO */}
         <WizardStep
           title="Configure AI CEO"
           description="Set up your AI CEO's personality and goals"
           currentStep={currentStep}
-          stepNumber={2}
-          isActive={currentStep === 2}
-          isCompleted={currentStep > 2}
+          stepNumber={3}
+          isActive={currentStep === 3}
+          isCompleted={currentStep > 3}
         >
           <div className="space-y-4">
             <div>
@@ -145,6 +188,7 @@ export default function DeploymentWizard({ onComplete, onCancel }: DeploymentWiz
                 </SelectContent>
               </Select>
             </div>
+
             <div>
               <label className="text-sm font-medium mb-2 block">Risk Tolerance</label>
               <Slider
@@ -160,6 +204,7 @@ export default function DeploymentWizard({ onComplete, onCancel }: DeploymentWiz
                  riskTolerance < 0.7 ? "Balanced" : "Aggressive"}
               </p>
             </div>
+
             <div>
               <label className="text-sm font-medium mb-2 block">Innovation Factor</label>
               <Slider
@@ -175,6 +220,7 @@ export default function DeploymentWizard({ onComplete, onCancel }: DeploymentWiz
                  innovationFactor < 0.7 ? "Balanced" : "Disruptive"}
               </p>
             </div>
+
             <div>
               <label className="text-sm font-medium mb-2 block">Decision Speed</label>
               <Slider
@@ -206,6 +252,7 @@ export default function DeploymentWizard({ onComplete, onCancel }: DeploymentWiz
           <Button
             onClick={handleNext}
             className="flex items-center gap-2"
+            disabled={!isCurrentStepValid()}
           >
             {currentStep === 4 ? "Deploy" : "Next"}
             <ChevronRight className="w-4 h-4" />

@@ -1,17 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Slider } from "@/components/ui/slider";
 import { characters } from "@/data/characters";
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Character } from "@/types";
+import { useToast } from "@/hooks/use-toast";
+import { swarmTokenService } from "@/services/swarm-token";
 
 export default function BuildSwarm() {
-  const { connect, connected } = useWallet();
+  const { connect, connected, connecting, publicKey } = useWallet();
   const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
+  const [deploying, setDeploying] = useState(false);
+  const { toast } = useToast();
+
+  // Initialize service when wallet is connected
+  useEffect(() => {
+    if (connected && publicKey) {
+      swarmTokenService.initialize(publicKey)
+        .catch(error => {
+          console.error("Service initialization failed:", error);
+          toast({
+            title: "Service Initialization Failed",
+            description: error instanceof Error ? error.message : "Failed to initialize swarm service",
+            variant: "destructive",
+          });
+        });
+    }
+  }, [connected, publicKey, toast]);
 
   const handleAgentSelection = (name: string) => {
     setSelectedAgents(prev => 
@@ -19,6 +37,76 @@ export default function BuildSwarm() {
         ? prev.filter(agent => agent !== name)
         : [...prev, name]
     );
+  };
+
+  const handleConnect = async () => {
+    try {
+      if (connect) {
+        await connect();
+      } else {
+        toast({
+          title: "Error",
+          description: "Wallet connection not available",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Wallet connection failed:", error);
+      toast({
+        title: "Connection Failed",
+        description: error instanceof Error ? error.message : "Failed to connect wallet",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeploy = async () => {
+    if (!connected || !publicKey) {
+      toast({
+        title: "Error",
+        description: "Please connect your wallet first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (selectedAgents.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please select at least one agent for your swarm",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setDeploying(true);
+    try {
+      // Deploy token first
+      const tokenResult = await swarmTokenService.deployToken();
+      if (!tokenResult.success) {
+        throw new Error(tokenResult.error);
+      }
+
+      // Create swarm with selected agents
+      const swarmResult = await swarmTokenService.createSwarm(selectedAgents);
+      if (!swarmResult.success) {
+        throw new Error(swarmResult.error);
+      }
+
+      toast({
+        title: "Success",
+        description: `Swarm deployed successfully!\nToken: ${tokenResult.tokenAddress}\nCollection: ${swarmResult.collectionAddress}`,
+      });
+    } catch (error) {
+      console.error("Deployment failed:", error);
+      toast({
+        title: "Deployment Failed",
+        description: error instanceof Error ? error.message : "Failed to deploy swarm",
+        variant: "destructive",
+      });
+    } finally {
+      setDeploying(false);
+    }
   };
 
   return (
@@ -84,59 +172,26 @@ export default function BuildSwarm() {
               </CardContent>
             </Card>
 
-            {/* Primary Directive & Neural Parameters */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Swarm Parameters</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Primary Directive</label>
-                  <Textarea placeholder="Define the swarm's objective" />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Neural Capacity</label>
-                  <Slider 
-                    defaultValue={[2048]} 
-                    max={4096} 
-                    min={512} 
-                    step={512}
-                    className="py-4"
-                  />
-                  <span className="text-sm text-muted-foreground">2048 tokens</span>
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Cognitive Variance</label>
-                  <Slider 
-                    defaultValue={[0.9]} 
-                    max={1} 
-                    min={0} 
-                    step={0.1}
-                    className="py-4"
-                  />
-                  <span className="text-sm text-muted-foreground">0.9</span>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Wallet Connection & Deploy */}
             <Card>
               <CardContent className="p-6">
                 {!connected ? (
                   <Button 
-                    onClick={() => connect()}
+                    onClick={handleConnect}
                     className="w-full"
                     size="lg"
+                    disabled={connecting}
                   >
-                    Connect Phantom Wallet
+                    {connecting ? "Connecting..." : "Connect Phantom Wallet"}
                   </Button>
                 ) : (
                   <Button 
-                    onClick={() => {/* Deploy logic */}}
+                    onClick={handleDeploy}
                     className="w-full"
                     size="lg"
+                    disabled={deploying}
                   >
-                    Deploy Swarm
+                    {deploying ? "Deploying Swarm..." : "Deploy Swarm"}
                   </Button>
                 )}
               </CardContent>

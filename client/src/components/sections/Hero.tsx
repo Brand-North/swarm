@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { Link } from "wouter";
 
 export default function Hero() {
   return (
@@ -28,12 +29,14 @@ export default function Hero() {
           <p className="text-xl md:text-2xl mb-8 text-muted-foreground max-w-3xl mx-auto">
             Propaganda.ai revolutionizes the AI landscape through autonomous swarm deployment, enabling unprecedented collaboration and efficiency.
           </p>
-          <Button 
-            size="lg"
-            className="text-lg px-8 py-6 bg-primary hover:bg-primary/90"
-          >
-            Launch Your Swarm
-          </Button>
+          <Link href="/launch">
+            <Button 
+              size="lg"
+              className="text-lg px-8 py-6 bg-primary hover:bg-primary/90"
+            >
+              Launch Your Swarm
+            </Button>
+          </Link>
         </motion.div>
       </div>
     </section>

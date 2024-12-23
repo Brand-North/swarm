@@ -10,7 +10,7 @@ export interface AgentConfig {
 export const AgentType = {
   TOKEN_DEPLOYER: "TOKEN_DEPLOYER",
   COLLECTION_DEPLOYER: "COLLECTION_DEPLOYER",
-  NFT_MINTER: "NFT_MINTER",
+  NFT_MINTER: "NFT_MINTER", 
   TRADER: "TRADER",
   LENDER: "LENDER"
 } as const;
@@ -22,6 +22,7 @@ export interface BaseAgentProps {
   onError?: (error: Error) => void;
 }
 
+// Token Deployer Agent Params
 export interface TokenDeployerParams {
   name: string;
   uri: string;
@@ -30,6 +31,7 @@ export interface TokenDeployerParams {
   initialSupply?: number;
 }
 
+// Collection Deployer Agent Params
 export interface CollectionDeployerParams {
   name: string;
   uri: string;
@@ -40,6 +42,7 @@ export interface CollectionDeployerParams {
   }[];
 }
 
+// NFT Minter Agent Params
 export interface NFTMinterParams {
   collectionMint: string;
   metadata: {
@@ -49,6 +52,7 @@ export interface NFTMinterParams {
   recipient?: string;
 }
 
+// Trader Agent Params
 export interface TraderParams {
   outputMint: string;
   inputAmount: number;
@@ -56,6 +60,7 @@ export interface TraderParams {
   slippageBps?: number;
 }
 
+// Lender Agent Params
 export interface LenderParams {
   assetMint: string;
   amount: number;

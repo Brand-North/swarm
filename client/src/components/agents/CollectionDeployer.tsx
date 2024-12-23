@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { SolanaAgentKit } from "solana-agent-kit";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -21,6 +23,7 @@ const formSchema = z.object({
 
 export default function CollectionDeployer({ onSuccess, onError }: BaseAgentProps) {
   const { toast } = useToast();
+  const { publicKey, signTransaction } = useWallet();
   const [isDeploying, setIsDeploying] = useState(false);
 
   const form = useForm<CollectionDeployerParams>({
@@ -32,21 +35,34 @@ export default function CollectionDeployer({ onSuccess, onError }: BaseAgentProp
   });
 
   const onSubmit = async (data: CollectionDeployerParams) => {
+    if (!publicKey || !signTransaction) {
+      toast({
+        title: "Wallet Not Connected",
+        description: "Please connect your Phantom wallet to deploy collection",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsDeploying(true);
     try {
-      // TODO: Implement collection deployment using Solana Agent Kit
-      // const collection = await agent.deployCollection({
-      //   name: data.name,
-      //   uri: data.uri,
-      //   royaltyBasisPoints: data.royaltyBasisPoints,
-      //   creators: data.creators
-      // });
-      
+      const agent = new SolanaAgentKit(publicKey.toString(), "https://api.mainnet-beta.solana.com");
+
+      const collection = await agent.deployCollection({
+        name: data.name,
+        uri: data.uri,
+        royaltyBasisPoints: data.royaltyBasisPoints,
+        creators: data.creators.map(creator => ({
+          address: creator.address,
+          share: creator.percentage
+        }))
+      });
+
       toast({
         title: "Collection Deployed",
-        description: `Successfully deployed collection ${data.name}`
+        description: `Successfully deployed collection "${data.name}"\nCollection Address: ${collection.address}`
       });
-      onSuccess?.(data);
+      onSuccess?.(collection);
     } catch (error) {
       const err = error as Error;
       toast({
@@ -75,7 +91,7 @@ export default function CollectionDeployer({ onSuccess, onError }: BaseAgentProp
                 <FormItem>
                   <FormLabel>Collection Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="My Collection" {...field} />
+                    <Input placeholder="My NFT Collection" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -107,6 +123,8 @@ export default function CollectionDeployer({ onSuccess, onError }: BaseAgentProp
                       type="number" 
                       {...field}
                       onChange={e => field.onChange(parseInt(e.target.value))}
+                      min={0}
+                      max={10000}
                     />
                   </FormControl>
                   <FormMessage />
@@ -121,7 +139,7 @@ export default function CollectionDeployer({ onSuccess, onError }: BaseAgentProp
                 <FormItem>
                   <FormLabel>Creator Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="Solana address..." {...field} />
+                    <Input placeholder="Solana wallet address..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -131,9 +149,9 @@ export default function CollectionDeployer({ onSuccess, onError }: BaseAgentProp
             <Button
               type="submit"
               className="w-full"
-              disabled={isDeploying}
+              disabled={isDeploying || !publicKey}
             >
-              {isDeploying ? "Deploying..." : "Deploy Collection"}
+              {isDeploying ? "Deploying Collection..." : "Deploy Collection"}
             </Button>
           </form>
         </Form>

@@ -10,14 +10,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { SolanaAgentKit } from "solana-agent-kit";
-import bs58 from "bs58";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   uri: z.string().url("Must be a valid URI"),
-  symbol: z.string().min(1, "Symbol is required"),
-  decimals: z.number().min(0).max(9).optional(),
-  initialSupply: z.number().min(0).optional()
+  symbol: z.string().min(1, "Symbol is required").max(10, "Symbol must be 10 characters or less"),
+  decimals: z.number().min(0).max(9),
+  initialSupply: z.number().min(0)
 });
 
 export default function TokenDeployer({ onSuccess, onError }: BaseAgentProps) {
@@ -37,7 +36,7 @@ export default function TokenDeployer({ onSuccess, onError }: BaseAgentProps) {
     if (!publicKey || !signTransaction) {
       toast({
         title: "Wallet Not Connected",
-        description: "Please connect your wallet to deploy tokens",
+        description: "Please connect your Phantom wallet to deploy tokens",
         variant: "destructive"
       });
       return;
@@ -45,24 +44,19 @@ export default function TokenDeployer({ onSuccess, onError }: BaseAgentProps) {
 
     setIsDeploying(true);
     try {
-      // Initialize Solana Agent Kit with connected wallet
-      const agent = new SolanaAgentKit(
-        bs58.encode(publicKey.toBytes()),
-        "https://api.mainnet-beta.solana.com"
-      );
+      const agent = new SolanaAgentKit(publicKey.toString(), "https://api.mainnet-beta.solana.com");
 
-      // Deploy token using Solana Agent Kit
-      const result = await agent.deployToken(
-        data.name,
-        data.uri,
-        data.symbol,
-        data.decimals,
-        data.initialSupply
-      );
+      const result = await agent.deployToken({
+        name: data.name,
+        uri: data.uri,
+        symbol: data.symbol,
+        decimals: data.decimals,
+        initialSupply: data.initialSupply
+      });
 
       toast({
-        title: "Token Deployed",
-        description: `Successfully deployed token ${data.name} (${data.symbol})\nMint Address: ${result.mint.toString()}`
+        title: "Token Deployment Success",
+        description: `Successfully deployed ${data.name} (${data.symbol})\nMint Address: ${result.mint}`
       });
       onSuccess?.(result);
     } catch (error) {
@@ -107,7 +101,7 @@ export default function TokenDeployer({ onSuccess, onError }: BaseAgentProps) {
                 <FormItem>
                   <FormLabel>Token Symbol</FormLabel>
                   <FormControl>
-                    <Input placeholder="MTK" {...field} />
+                    <Input placeholder="MTK" maxLength={10} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,8 +131,10 @@ export default function TokenDeployer({ onSuccess, onError }: BaseAgentProps) {
                   <FormControl>
                     <Input 
                       type="number" 
-                      {...field} 
+                      {...field}
                       onChange={e => field.onChange(parseInt(e.target.value))}
+                      min={0}
+                      max={9}
                     />
                   </FormControl>
                   <FormMessage />
@@ -157,6 +153,7 @@ export default function TokenDeployer({ onSuccess, onError }: BaseAgentProps) {
                       type="number" 
                       {...field}
                       onChange={e => field.onChange(parseInt(e.target.value))}
+                      min={0}
                     />
                   </FormControl>
                   <FormMessage />
@@ -169,7 +166,7 @@ export default function TokenDeployer({ onSuccess, onError }: BaseAgentProps) {
               className="w-full"
               disabled={isDeploying || !publicKey}
             >
-              {isDeploying ? "Deploying..." : "Deploy Token"}
+              {isDeploying ? "Deploying Token..." : "Deploy Token"}
             </Button>
           </form>
         </Form>

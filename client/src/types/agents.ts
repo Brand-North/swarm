@@ -22,6 +22,28 @@ export interface BaseAgentProps {
   onError?: (error: Error) => void;
 }
 
+// Preset Configuration Types
+export interface SwarmPreset {
+  id: string;
+  name: string;
+  description: string;
+  agentTypes: AgentType[];
+  neuralCapacity: number;
+  cognitiveVariance: number;
+  category: PresetCategory;
+  icon: string;
+}
+
+export const PresetCategory = {
+  DEFI: "DEFI",
+  NFT: "NFT",
+  TRADING: "TRADING",
+  YIELD: "YIELD",
+  MEME: "MEME"
+} as const;
+
+export type PresetCategory = typeof PresetCategory[keyof typeof PresetCategory];
+
 // Token Deployer Agent Params
 export interface TokenDeployerParams {
   name: string;

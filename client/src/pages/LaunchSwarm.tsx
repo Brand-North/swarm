@@ -7,9 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { AgentType, type AgentConfig } from "@/types/agents";
+import { AgentType, type AgentConfig, SwarmPreset } from "@/types/agents";
 import { Network, Shield, FileCode2, Brain, Database } from "lucide-react";
 import AgentHeatMap from "@/components/visualizations/AgentHeatMap";
+import PresetConfigs from "@/components/presets/PresetConfigs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const agents = [
   {
@@ -57,6 +59,7 @@ export default function LaunchSwarm() {
   const [swarmPurpose, setSwarmPurpose] = useState("");
   const [neuralCapacity, setNeuralCapacity] = useState(2048);
   const [cognitiveVariance, setCognitiveVariance] = useState(0.9);
+  const [activeTab, setActiveTab] = useState<string>("custom");
 
   const toggleAgent = (type: AgentType) => {
     setSelectedAgents(prev =>
@@ -64,6 +67,20 @@ export default function LaunchSwarm() {
         ? prev.filter(t => t !== type)
         : [...prev, type]
     );
+  };
+
+  const handlePresetSelect = (preset: SwarmPreset) => {
+    setSelectedAgents(preset.agentTypes);
+    setNeuralCapacity(preset.neuralCapacity);
+    setCognitiveVariance(preset.cognitiveVariance);
+    setSwarmName(`${preset.name} Swarm`);
+    setSwarmPurpose(preset.description);
+    setActiveTab("custom");
+
+    toast({
+      title: "Preset Selected",
+      description: `Loaded ${preset.name} configuration. You can now customize or deploy directly.`
+    });
   };
 
   const deploySwarm = async () => {
@@ -105,90 +122,103 @@ export default function LaunchSwarm() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Swarm Configuration</CardTitle>
-              <CardDescription>Configure your neural swarm parameters</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Swarm Designation</label>
-                <Input
-                  placeholder="Name your swarm"
-                  value={swarmName}
-                  onChange={(e) => setSwarmName(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-2 block">Neural Blueprint</label>
-                <Input
-                  placeholder="Define your swarm's mission"
-                  value={swarmPurpose}
-                  onChange={(e) => setSwarmPurpose(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-2 block">Neural Capacity: {neuralCapacity}</label>
-                <Slider
-                  value={[neuralCapacity]}
-                  onValueChange={([value]) => setNeuralCapacity(value)}
-                  max={4096}
-                  min={1024}
-                  step={256}
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-2 block">Cognitive Variance: {cognitiveVariance}</label>
-                <Slider
-                  value={[cognitiveVariance * 100]}
-                  onValueChange={([value]) => setCognitiveVariance(value / 100)}
-                  max={100}
-                  min={10}
-                  step={10}
-                />
-              </div>
-            </CardContent>
-          </Card>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="presets">Quick Deploy Presets</TabsTrigger>
+            <TabsTrigger value="custom">Custom Configuration</TabsTrigger>
+          </TabsList>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Swarm Agents</CardTitle>
-              <CardDescription>Choose your meme-powered blockchain agents</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {agents.map((agent) => (
-                <motion.div
-                  key={agent.type}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Card
-                    className={`cursor-pointer transition-colors ${
-                      selectedAgents.includes(agent.type)
-                        ? "border-primary bg-primary/10"
-                        : ""
-                    }`}
-                    onClick={() => toggleAgent(agent.type)}
-                  >
-                    <CardHeader className="py-4">
-                      <div className="flex items-center gap-3">
-                        <agent.icon className="w-6 h-6 text-primary" />
-                        <div>
-                          <CardTitle className="text-lg">{agent.name}</CardTitle>
-                          <CardDescription>
-                            <span className="font-medium text-primary/80 block">{agent.role}</span>
-                            <span className="block">{agent.description}</span>
-                          </CardDescription>
-                        </div>
-                      </div>
-                    </CardHeader>
-                  </Card>
-                </motion.div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
+          <TabsContent value="presets" className="mt-6">
+            <PresetConfigs onSelectPreset={handlePresetSelect} />
+          </TabsContent>
+
+          <TabsContent value="custom">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Swarm Configuration</CardTitle>
+                  <CardDescription>Configure your neural swarm parameters</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Swarm Designation</label>
+                    <Input
+                      placeholder="Name your swarm"
+                      value={swarmName}
+                      onChange={(e) => setSwarmName(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Neural Blueprint</label>
+                    <Input
+                      placeholder="Define your swarm's mission"
+                      value={swarmPurpose}
+                      onChange={(e) => setSwarmPurpose(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Neural Capacity: {neuralCapacity}</label>
+                    <Slider
+                      value={[neuralCapacity]}
+                      onValueChange={([value]) => setNeuralCapacity(value)}
+                      max={4096}
+                      min={1024}
+                      step={256}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Cognitive Variance: {cognitiveVariance}</label>
+                    <Slider
+                      value={[cognitiveVariance * 100]}
+                      onValueChange={([value]) => setCognitiveVariance(value / 100)}
+                      max={100}
+                      min={10}
+                      step={10}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Swarm Agents</CardTitle>
+                  <CardDescription>Choose your meme-powered blockchain agents</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {agents.map((agent) => (
+                    <motion.div
+                      key={agent.type}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Card
+                        className={`cursor-pointer transition-colors ${
+                          selectedAgents.includes(agent.type)
+                            ? "border-primary bg-primary/10"
+                            : ""
+                        }`}
+                        onClick={() => toggleAgent(agent.type)}
+                      >
+                        <CardHeader className="py-4">
+                          <div className="flex items-center gap-3">
+                            <agent.icon className="w-6 h-6 text-primary" />
+                            <div>
+                              <CardTitle className="text-lg">{agent.name}</CardTitle>
+                              <CardDescription>
+                                <span className="font-medium text-primary/80 block">{agent.role}</span>
+                                <span className="block">{agent.description}</span>
+                              </CardDescription>
+                            </div>
+                          </div>
+                        </CardHeader>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
 
         {selectedAgents.length > 0 && (
           <motion.div

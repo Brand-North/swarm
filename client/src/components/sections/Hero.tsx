@@ -32,7 +32,7 @@ export default function Hero() {
           <p className="text-lg sm:text-xl md:text-2xl mb-8 text-muted-foreground max-w-2xl mx-auto font-light tracking-wide px-4">
             The Power of Many—Swarm AI Agents That Work, Think, and Deliver Together
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex justify-center">
             <Link href="/launch">
               <Button 
                 size="lg"
@@ -41,9 +41,6 @@ export default function Hero() {
                 Launch Your Swarm
               </Button>
             </Link>
-            <div className="text-xs sm:text-sm text-muted-foreground font-light tracking-wider">
-              Witness the democratization of AI—right here, right now
-            </div>
           </div>
           <motion.blockquote 
             initial={{ opacity: 0 }}

@@ -15,6 +15,7 @@ import PresetConfigs from "@/components/presets/PresetConfigs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DeploymentWizard from "@/components/wizard/DeploymentWizard";
+import SwarmFormationSimulator from "@/components/visualizations/SwarmFormationSimulator";
 
 const agents = [
   {
@@ -365,21 +366,35 @@ export default function LaunchSwarm() {
             </Tabs>
 
             {selectedAgents.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  <AgentHeatMap selectedAgents={selectedAgents} />
-                </motion.div>
+              <div className="space-y-8 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    <AgentHeatMap selectedAgents={selectedAgents} />
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    <NetworkVisualization
+                      selectedAgents={selectedAgents}
+                      isDeploying={isDeploying}
+                    />
+                  </motion.div>
+                </div>
 
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  <NetworkVisualization
+                  <SwarmFormationSimulator
                     selectedAgents={selectedAgents}
-                    isDeploying={isDeploying}
+                    isActive={!isDeploying}
+                    width={window.innerWidth > 768 ? 800 : 350}
+                    height={300}
                   />
                 </motion.div>
               </div>
